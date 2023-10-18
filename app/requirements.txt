@@ -1,0 +1,10 @@
+
+fastapi==0.103.2
+uvicorn==0.23.2
+pytest==7.4.2
+sqlalchemy==2.0.22
+pydantic-settings==2.0.3
+httpx==0.25.0
+alembic==1.12.0
+sqladmin==0.15.2
+requests==2.31.0
