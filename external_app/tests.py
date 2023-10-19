@@ -20,5 +20,4 @@ def test_emulate_external_server():
     # Отправляем запрос на эмуляцию обработки
     response = external_client.post("/emulate_external_server", json={"cadastre_number": 1, "latitude": 1.0, "longitude": 2.0})
     
-
     assert response in [True, False]

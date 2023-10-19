@@ -7,10 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 
-origins = [
-    "http://localhost",
-    "http://localhost:8000",
-]
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +19,7 @@ app.add_middleware(
 
 
 @app.post('/result')
-def emulate_external_server(cadastre_number: int, latitude: float, longitude: float):
+def emulate_external_server():
     time.sleep(random.uniform(0, 2))
     response_data = {'response': random.choice([True, False])}
     return response_data
@@ -30,4 +27,5 @@ def emulate_external_server(cadastre_number: int, latitude: float, longitude: fl
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app)
+    uvicorn.run('main:app', host='0.0.0.0', port=8003)
+

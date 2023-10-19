@@ -6,9 +6,17 @@ services:
       context: ./app
     ports:
       - "8000:8000"
+    networks:
+      - cadastre_network
       
   external_app:
     build:
       context: ./external_app
     ports:
       - "8003:8003"
+    networks:
+      - cadastre_network
+
+networks:
+  cadastre_network:
+    driver: bridge
