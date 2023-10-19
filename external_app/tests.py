@@ -1,23 +1,26 @@
+from http import HTTPStatus
+
 from fastapi.testclient import TestClient
-from app.external_server import external_app
+
+from .main import app
 
 
-# client = TestClient(external_app)
+ENDPOINT = '/result'
+TEST_PARAMS = {
+    "cadastre_number": 1,
+    "latitude": 12.345678,
+    "longitude": 87.654321,
+}
+
+client = TestClient(app)
 
 
-# def test_emulate_external_server():
-#     response = client.post('/emulate_external_server')
-#     assert response.status_code == 200
-#     assert 'response' in response.json()
-#     assert response.json()['response'] in (True, False)
+def test_status_code_is_200():
+    response = client.get(ENDPOINT, params=TEST_PARAMS)
+    assert response.status_code == HTTPStatus.OK, 'Массаракш!'
 
 
-# Опциональный тест для проверки внешнего сервера
-def test_emulate_external_server():
-    # Подготавливаем клиент для внешнего сервера
-    external_client = TestClient(external_app)
-
-    # Отправляем запрос на эмуляцию обработки
-    response = external_client.post("/emulate_external_server", json={"cadastre_number": 1, "latitude": 1.0, "longitude": 2.0})
-    
-    assert response in [True, False]
+def test_json_is_correct():
+    response = client.get(ENDPOINT, params=TEST_PARAMS)
+    assert 'response' in response.json()
+    assert response.json()['response'] in (True, False)

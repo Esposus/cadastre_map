@@ -1,6 +1,4 @@
-import json
-import random
-import time
+from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 import requests
@@ -13,27 +11,30 @@ from .database import get_db
 router = APIRouter()
 
 
-@router.post('/query')
+@router.get('/query')
 def create_query(cadastre_number: int,
                  latitude: float,
                  longitude: float,
                  db: Session = Depends(get_db)):
-    """Создание запроса"""
+    """Создание запроса к внешнему сервису"""
+
     url = 'http://external_app:8003/result'
-    # response = emulate_external_server()
-    data = {
+    params = {
         "cadastre_number": cadastre_number,
         "latitude": latitude,
         "longitude": longitude
     }
-    data = json.dumps(data).encode("utf-8")
-    request = requests.post(url=url)
-    response_data = request.json()['response']
-    db_query = save_request(
-        db, cadastre_number, latitude, longitude, response=response_data
-    )
-
-    return {'response': db_query}
+    try:
+        request = requests.get(url=url, params=params)
+        response_data = request.json()['response']
+        db_query = save_request(
+            db, cadastre_number, latitude, longitude, result=response_data
+        )
+        return {'response': db_query}
+    except Exception as e:
+        raise HTTPException(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=str(e)
+        )
 
 
 @router.get('/history')
@@ -42,10 +43,9 @@ def get_all_history(db: Session = Depends(get_db)):
     history = get_all_request_history(db)
     if not history:
         raise HTTPException(
-            status_code=404,
-            detail="Данные отсутствуют в базе"
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="База данных пуста"
         )
-
     return {"history": history}
 
 
@@ -55,10 +55,9 @@ def get_history(cadastre_number: int, db: Session = Depends(get_db)):
     history = get_request_history(db, cadastre_number)
     if not history:
         raise HTTPException(
-            status_code=404,
+            status_code=HTTPStatus.NOT_FOUND,
             detail="Отсутствуют записи с данным кадастровым номером"
         )
-
     return {"history": history}
 
 
@@ -66,10 +65,3 @@ def get_history(cadastre_number: int, db: Session = Depends(get_db)):
 def ping():
     """Проверка на запуск сервера"""
     return {'ping': 'pong'}
-
-
-@router.get('/result')
-def emulate_external_server():
-    """Эмуляция внешнего сервиса"""
-    time.sleep(random.uniform(0, 2))
-    return random.choice([True, False])

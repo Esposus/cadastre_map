@@ -8,7 +8,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from src.database import Base
-from src.models import Request  # noqa
+from src.models import CadastreRequest  # noqa
 
 
 load_dotenv('.env')

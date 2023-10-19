@@ -1,23 +1,23 @@
 from sqladmin import ModelView
-from .models import Request
+from .models import CadastreRequest
 
 
-class QueryHistoryAdmin(ModelView, model=Request):
+class QueryHistoryAdmin(ModelView, model=CadastreRequest):
     column_list = [
-        Request.cadastre_number,
-        Request.latitude,
-        Request.longitude,
-        Request.response,
-        Request.timestamp,
-        Request.id
+        CadastreRequest.cadastre_number,
+        CadastreRequest.latitude,
+        CadastreRequest.longitude,
+        CadastreRequest.result,
+        CadastreRequest.timestamp,
+        CadastreRequest.id
     ]
     name = 'История запросов'
     name_plural = 'Истории запросов'
     column_labels = {
-        Request.cadastre_number: 'Кадастровый номер',
-        Request.latitude: 'Широта',
-        Request.longitude: 'Долгота',
-        Request.response: 'Ответ',
-        Request.timestamp: 'Дата',
-        Request.id: 'Id',
+        CadastreRequest.cadastre_number: 'Кадастровый номер',
+        CadastreRequest.latitude: 'Широта',
+        CadastreRequest.longitude: 'Долгота',
+        CadastreRequest.result: 'Ответ',
+        CadastreRequest.timestamp: 'Дата',
+        CadastreRequest.id: 'Id',
     }
