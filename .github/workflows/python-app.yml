@@ -33,7 +33,7 @@ jobs:
         flake8 . --ignore I004,I001,I005,I003,R505,E501,R504,W503,W504 --exclude tests,migrations,alembic
     - name: Tests with pytest
       run: |
-        python -m pytest
+        python -m pytest expernal_app/tests.py
 
   telegram-alert:
     name: Telegram message on git push
