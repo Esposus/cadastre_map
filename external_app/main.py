@@ -6,7 +6,6 @@ from fastapi import FastAPI
 app = FastAPI()
 
 
-
 @app.get('/result')
 def emulate_external_server(cadastre_number: int,
                             latitude: float,

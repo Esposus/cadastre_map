@@ -1,6 +1,4 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 import requests
 from sqlalchemy.orm import Session
 
@@ -22,7 +20,7 @@ def create_query(cadastre_number: int,
     params = {
         "cadastre_number": cadastre_number,
         "latitude": latitude,
-        "longitude": longitude
+        "longitude": longitude,
     }
     try:
         request = requests.get(url=url, params=params)
@@ -33,7 +31,7 @@ def create_query(cadastre_number: int,
         return {'response': db_query}
     except Exception as e:
         raise HTTPException(
-            status_code=HTTPStatus.INTERNAL_SERVER_ERROR, detail=str(e)
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
         )
 
 
@@ -43,8 +41,8 @@ def get_all_history(db: Session = Depends(get_db)):
     history = get_all_request_history(db)
     if not history:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="База данных пуста"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="База данных пуста",
         )
     return {"history": history}
 
@@ -52,13 +50,13 @@ def get_all_history(db: Session = Depends(get_db)):
 @router.get('/history/{cadastre_number}')
 def get_history(cadastre_number: int, db: Session = Depends(get_db)):
     """Получение истории запросов по кадастровому номеру"""
-    history = get_request_history(db, cadastre_number)
-    if not history:
+    history_by_cadastre_number = get_request_history(db, cadastre_number)
+    if not history_by_cadastre_number:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail="Отсутствуют записи с данным кадастровым номером"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Отсутствуют записи с данным кадастровым номером",
         )
-    return {"history": history}
+    return {"history": history_by_cadastre_number}
 
 
 @router.get('/ping')
