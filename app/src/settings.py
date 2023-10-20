@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -8,9 +9,7 @@ class Settings(BaseSettings):
         'с указанным кадастровым номером на карте, зная его широту и долготу'
     )
     database_url: str = 'sqlite:///./cadastre.db'
-
-    class Config:
-        env_file = '.env'
+    model_config = ConfigDict(_env_file='.env')
 
 
 settings = Settings()

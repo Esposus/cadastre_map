@@ -1,5 +1,7 @@
+from datetime import datetime
+from pydantic import BaseModel
 from sqlalchemy import (
-    MetaData, Column, Integer, Float, Boolean, DateTime, func
+    MetaData, Column, Integer, Float, Boolean, DateTime
 )
 
 from .database import Base
@@ -17,4 +19,13 @@ class CadastreRequest(Base):
     latitude = Column(Float)
     longitude = Column(Float)
     result = Column(Boolean, nullable=True)
-    timestamp = Column(DateTime, default=func.now())
+    timestamp = Column(DateTime, default=datetime.utcnow)
+
+
+class QueryRequest(BaseModel):
+    id: int
+    cadastre_number: int
+    latitude: float
+    longitude: float
+    result: bool
+    timestamp: datetime

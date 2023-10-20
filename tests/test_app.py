@@ -2,25 +2,27 @@ from fastapi import status
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
 
 from app.main import app
 from app.src.database import Base, get_db
 from app.src.models import CadastreRequest
 
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./cadastre.db"
+SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///:memory:"
 
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+test_engine = create_engine(
+    SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False}
 )
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+TestSessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=test_engine
+)
 
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=test_engine)
 
 
-@pytest.fixture
-def db():
+@pytest.fixture(scope='function')
+def override_db():
     db = TestSessionLocal()
     try:
         yield db
@@ -28,29 +30,27 @@ def db():
         db.close()
 
 
-app.dependency_overrides[get_db] = db
+app.dependency_overrides[get_db] = override_db
 
 
-def test_save_request(db):
+def test_save_request(override_db: Session):
     request_data = {
         'cadastre_number': 123,
         'latitude': 45.678901,
         'longitude': 23.456789,
         'result': True
     }
-
     db_request = CadastreRequest(
         cadastre_number=request_data['cadastre_number'],
         latitude=request_data['latitude'],
         longitude=request_data['longitude'],
         result=request_data['result']
     )
-    db.add(db_request)
-    db.commit()
-    db.refresh(db_request)
-
+    override_db.add(db_request)
+    override_db.commit()
+    override_db.refresh(db_request)
     stored_request = (
-        db.query(CadastreRequest)
+        override_db.query(CadastreRequest)
         .filter(CadastreRequest.id == db_request.id).first()
     )
 
@@ -68,6 +68,7 @@ def test_ping_pong():
     assert response.json() == {'ping': 'pong'}
 
 
+@pytest.fixture
 def test_get_all_history():
     client = TestClient(app)
     response = client.get("/history")
@@ -76,6 +77,7 @@ def test_get_all_history():
     assert 'history' in response.json()
 
 
+@pytest.fixture
 def test_get_history_by_cadastre_number():
     client = TestClient(app)
     response = client.get("/history/123")
