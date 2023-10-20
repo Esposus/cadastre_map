@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
+"""
+проверить новый импорт для алхимии 2.0
+from sqlalchemy.orm import declarative_base
+"""
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./cadastre.db"
 

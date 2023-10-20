@@ -21,7 +21,7 @@ def save_request(
     return db_query
 
 
-def get_request_history(db: Session, cadastre_number: int):
+def get_history_by_cadastre_number(db: Session, cadastre_number: int):
     return (
         db.query(CadastreRequest)
         .filter(CadastreRequest.cadastre_number == cadastre_number).all()

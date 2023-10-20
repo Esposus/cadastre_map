@@ -18,12 +18,3 @@ class CadastreRequest(Base):
     longitude = Column(Float)
     result = Column(Boolean, nullable=True)
     timestamp = Column(DateTime, default=func.now())
-
-
-# class QueryResponse(BaseModel):
-#     id: int
-#     cadastre_number: int
-#     latitude: float
-#     longitude: float
-#     response: bool
-#     timestamp: datetime

@@ -11,6 +11,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = '.env'
-
+"""проверить ConfigDict"""
 
 settings = Settings()

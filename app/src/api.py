@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 import requests
 from sqlalchemy.orm import Session
 
-from .crud import get_request_history, get_all_request_history, save_request
+from .crud import (
+    get_history_by_cadastre_number, get_all_request_history, save_request
+)
 from .database import get_db
 
 
@@ -50,13 +52,13 @@ def get_all_history(db: Session = Depends(get_db)):
 @router.get('/history/{cadastre_number}')
 def get_history(cadastre_number: int, db: Session = Depends(get_db)):
     """Получение истории запросов по кадастровому номеру"""
-    history_by_cadastre_number = get_request_history(db, cadastre_number)
-    if not history_by_cadastre_number:
+    history = get_history_by_cadastre_number(db, cadastre_number)
+    if not history:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Отсутствуют записи с данным кадастровым номером",
         )
-    return {"history": history_by_cadastre_number}
+    return {"history": history}
 
 
 @router.get('/ping')
