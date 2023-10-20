@@ -1,3 +1,4 @@
+from fastapi import status
 from fastapi.testclient import TestClient
 import pytest
 from sqlalchemy import create_engine
@@ -28,7 +29,6 @@ def db():
 
 
 app.dependency_overrides[get_db] = db
-client = TestClient(app)
 
 
 def test_save_request(db):
@@ -59,3 +59,26 @@ def test_save_request(db):
     assert stored_request.latitude == request_data["latitude"]
     assert stored_request.longitude == request_data["longitude"]
     assert stored_request.result == request_data["result"]
+
+
+def test_ping_pong():
+    client = TestClient(app)
+    response = client.get('ping')
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == {'ping': 'pong'}
+
+
+def test_get_all_history():
+    client = TestClient(app)
+    response = client.get("/history")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json())
+    assert 'history' in response.json()
+
+
+def test_get_history_by_cadastre_number():
+    client = TestClient(app)
+    response = client.get("/history/123")
+    assert response.status_code == status.HTTP_200_OK
+    assert len(response.json())
+    assert 'history' in response.json()
