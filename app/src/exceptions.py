@@ -1,0 +1,3 @@
+
+class APIResponseJSONException(Exception):
+    pass

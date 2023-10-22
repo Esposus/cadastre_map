@@ -9,6 +9,7 @@ def save_request(
         longitude: float,
         result: bool
 ):
+
     db_query = CadastreRequest(
         cadastre_number=cadastre_number,
         latitude=latitude,

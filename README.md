@@ -20,8 +20,6 @@
 Сервис будет запущен и доступен по следующим адресам:
 --------------------------------------------------------
 
-- http://127.0.0.1:8000 - API первого сервиса
-- http://127.0.0.1:8003 - API второго приложения
 - http://127.0.0.1:8000/docs - автоматически сгенерированная документация Swagger для первого сервиса
 - http://127.0.0.1:8003/docs - автоматически сгенерированная документация Swagger для второго сервиса
 
@@ -44,19 +42,15 @@ git@github.com:Esposus/cadastre_map.git
 ```bash
 cd cadastre_map
 ```
-2. Cоздайте в папке app файл ```.env``` с переменными окружения:
-```bash 
-touch app/.env
-```
 3. Заполните ```.env``` файл с переменными окружения по примеру:
 ```bash 
-echo DATABASE_URL=sqlite:///./cadastre.db >> app/.env-dev
+echo DATABASE_URL=sqlite:///./cadastre.db >> app/.env
 ```
 4. Установите и запустите приложения в контейнерах:
 ```bash 
-docker-compose build & docker-compose up -d
+docker-compose build & docker-compose up
 ```
-
-### Автор 
+ 
+## Автор 
 [Дмитрий Морозов](https://github.com/Esposus "GitHub аккаунт")
-Telegram: @Vanadoo
+*telegram: @Vanadoo*

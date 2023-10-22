@@ -1,41 +1,53 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 import httpx
+from loguru import logger
 from sqlalchemy.orm import Session
 
 from .crud import (
     get_history_by_cadastre_number, get_all_request_history, save_request
 )
 from .database import get_db
-from .models import QueryData
+from exceptions import APIResponseJSONException
 
 
 router = APIRouter()
 
 
 @router.get('/query')
-def create_query(query_data: QueryData, db: Session = Depends(get_db)):
+def create_query(
+    cadastre_number: int,
+    latitude: float,
+    longitude: float,
+    db: Session = Depends(get_db)
+):
     """Создание запроса к внешнему сервису"""
 
     url = 'http://external_app:8003/result'
     params = {
-        "cadastre_number": query_data.cadastre_number,
-        "latitude": query_data.latitude,
-        "longitude": query_data.longitude,
+        "cadastre_number": cadastre_number,
+        "latitude": latitude,
+        "longitude": longitude,
     }
     try:
         request = httpx.get(url=url, params=params)
         request.raise_for_status()
-    except httpx.RequestError as exc:
-        print(f"An error occurred while requesting {exc.request.url!r}.")
-    except httpx.HTTPStatusError as exc:
-        print(f"Error response {exc.response.status_code} while requesting {exc.request.url!r}.")
+    except httpx.RequestError as e:
+        logger.error(f"Ошибка при отправке запроса {e.request.url!r}.")
+    except httpx.HTTPStatusError as e:
+        logger.error(
+            f'Ошибка ответа {e.response.status_code} '
+            f'при запросе {e.request.url!r}'
+        )
+    try:
         response_data = request.json()['response']
-    response_data = True
+    except KeyError:
+        logger.error('Ошибка при обращении по ключу "response"')
+        raise APIResponseJSONException()
     db_query = save_request(
         db,
-        query_data.cadastre_number,
-        query_data.latitude,
-        query_data.longitude,
+        cadastre_number,
+        latitude,
+        longitude,
         result=response_data
     )
     return {'response': db_query}
