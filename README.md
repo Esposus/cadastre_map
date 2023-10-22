@@ -39,6 +39,7 @@
 ```bash
 git clone git@github.com:Esposus/cadastre_map.git
 ```
+2. Перейдите в папку проекта:
 ```bash
 cd cadastre_map
 ```
@@ -53,4 +54,5 @@ docker-compose build & docker-compose up
  
 ## Автор 
 [Дмитрий Морозов](https://github.com/Esposus "GitHub аккаунт")
+
 *telegram: @Vanadoo*
