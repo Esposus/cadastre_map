@@ -7,7 +7,7 @@ from .crud import (
     get_history_by_cadastre_number, get_all_request_history, save_request
 )
 from .database import get_db
-from exceptions import APIResponseJSONException
+from .exceptions import APIResponseJSONException
 
 
 router = APIRouter()
