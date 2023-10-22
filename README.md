@@ -54,7 +54,9 @@ echo DATABASE_URL=sqlite:///./cadastre.db >> app/.env-dev
 ```
 4. Установите и запустите приложения в контейнерах:
 ```bash 
-docker-compose build & docker-compose up
+docker-compose build & docker-compose up -d
 ```
 
-### Автор проекта: [Дмитрий Морозов](https://github.com/Esposus "GitHub аккаунт")
+### Автор 
+[Дмитрий Морозов](https://github.com/Esposus "GitHub аккаунт")
+Telegram: @Vanadoo

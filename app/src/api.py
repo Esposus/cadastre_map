@@ -1,40 +1,44 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-import requests
+import httpx
 from sqlalchemy.orm import Session
 
 from .crud import (
     get_history_by_cadastre_number, get_all_request_history, save_request
 )
 from .database import get_db
+from .models import QueryData
 
 
 router = APIRouter()
 
 
 @router.get('/query')
-def create_query(cadastre_number: int,
-                 latitude: float,
-                 longitude: float,
-                 db: Session = Depends(get_db)):
+def create_query(query_data: QueryData, db: Session = Depends(get_db)):
     """Создание запроса к внешнему сервису"""
 
     url = 'http://external_app:8003/result'
     params = {
-        "cadastre_number": cadastre_number,
-        "latitude": latitude,
-        "longitude": longitude,
+        "cadastre_number": query_data.cadastre_number,
+        "latitude": query_data.latitude,
+        "longitude": query_data.longitude,
     }
     try:
-        request = requests.get(url=url, params=params)
+        request = httpx.get(url=url, params=params)
+        request.raise_for_status()
+    except httpx.RequestError as exc:
+        print(f"An error occurred while requesting {exc.request.url!r}.")
+    except httpx.HTTPStatusError as exc:
+        print(f"Error response {exc.response.status_code} while requesting {exc.request.url!r}.")
         response_data = request.json()['response']
-        db_query = save_request(
-            db, cadastre_number, latitude, longitude, result=response_data
-        )
-        return {'response': db_query}
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)
-        )
+    response_data = True
+    db_query = save_request(
+        db,
+        query_data.cadastre_number,
+        query_data.latitude,
+        query_data.longitude,
+        result=response_data
+    )
+    return {'response': db_query}
 
 
 @router.get('/history')

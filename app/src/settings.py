@@ -11,5 +11,8 @@ class Settings(BaseSettings):
     database_url: str = 'sqlite:///./cadastre.db'
     model_config = ConfigDict(_env_file='.env')
 
+    # class Config:
+    #     env_file = '.env'
+
 
 settings = Settings()

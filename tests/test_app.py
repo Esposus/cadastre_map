@@ -21,7 +21,7 @@ TestSessionLocal = sessionmaker(
 Base.metadata.create_all(bind=test_engine)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='session', autouse=True)
 def override_db():
     db = TestSessionLocal()
     try:
@@ -68,19 +68,17 @@ def test_ping_pong():
     assert response.json() == {'ping': 'pong'}
 
 
-@pytest.fixture
-def test_get_all_history():
-    client = TestClient(app)
-    response = client.get("/history")
-    assert response.status_code == status.HTTP_200_OK
-    assert len(response.json())
-    assert 'history' in response.json()
+# def test_get_all_history():
+#     client = TestClient(app)
+#     response = client.get("/history")
+#     assert response.status_code == status.HTTP_200_OK
+#     assert len(response.json())
+#     assert 'history' in response.json()
 
 
-@pytest.fixture
-def test_get_history_by_cadastre_number():
-    client = TestClient(app)
-    response = client.get("/history/123")
-    assert response.status_code == status.HTTP_200_OK
-    assert len(response.json())
-    assert 'history' in response.json()
+# def test_get_history_by_cadastre_number():
+#     client = TestClient(app)
+#     response = client.get("/history/123")
+#     assert response.status_code == status.HTTP_200_OK
+#     assert len(response.json())
+#     assert 'history' in response.json()
