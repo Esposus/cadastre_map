@@ -37,7 +37,7 @@
 
 1. Клонируйте репозиторий и перейдите в него в командной строке:
 ```bash
-git@github.com:Esposus/cadastre_map.git
+git clone git@github.com:Esposus/cadastre_map.git
 ```
 ```bash
 cd cadastre_map

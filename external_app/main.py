@@ -10,7 +10,7 @@ app = FastAPI()
 def emulate_external_server(cadastre_number: int,
                             latitude: float,
                             longitude: float):
-    time.sleep(random.uniform(0, 2))
+    time.sleep(random.uniform(0, 60))
     response_data = {'response': random.choice([True, False])}
     return response_data
 
